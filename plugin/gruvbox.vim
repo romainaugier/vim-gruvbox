@@ -203,19 +203,51 @@ endfunction
 let s:colors = s:GetColors()
 " }}}
 
+" Color Mapping {{{
+" Map hex colors to terminal color numbers
+let s:cterm_colors = {
+  \ '#1d2021': '234', '#282828': '235', '#32302f': '236',
+  \ '#3c3836': '237', '#504945': '239', '#665c54': '241',
+  \ '#7c6f64': '243', '#f9f5d7': '230', '#fbf1c7': '229',
+  \ '#f2e5bc': '228', '#ebdbb2': '223', '#d5c4a1': '250',
+  \ '#bdae93': '248', '#a89984': '246', '#fb4934': '167',
+  \ '#b8bb26': '142', '#fabd2f': '214', '#83a598': '109',
+  \ '#d3869b': '175', '#8ec07c': '108', '#fe8019': '208',
+  \ '#cc241d': '124', '#98971a': '106', '#d79921': '172',
+  \ '#458588': '66',  '#b16286': '132', '#689d6a': '72',
+  \ '#d65d0e': '166', '#9d0006': '88',  '#79740e': '100',
+  \ '#b57614': '136', '#076678': '24',  '#8f3f71': '96',
+  \ '#427b58': '66',  '#af3a03': '130', '#928374': '245'
+  \ }
+
+function! s:GetCterm(hex)
+  return get(s:cterm_colors, a:hex, 'NONE')
+endfunction
+" }}}
+
 " Highlight Function {{{
 function! s:HL(group, fg, bg, attr)
   let l:cmd = 'hi ' . a:group
 
   if !empty(a:fg)
-    let l:cmd .= ' guifg=' . a:fg . ' ctermfg=' . a:fg
+    let l:cmd .= ' guifg=' . a:fg
+    if has('gui_running') || &termguicolors
+      " Only add ctermfg if not in GUI mode
+    else
+      let l:cmd .= ' ctermfg=' . s:GetCterm(a:fg)
+    endif
   endif
 
   if !empty(a:bg)
     if g:gruvbox_transparent_mode && (a:bg == s:colors.bg0 || a:bg == s:colors.bg1)
       let l:cmd .= ' guibg=NONE ctermbg=NONE'
     else
-      let l:cmd .= ' guibg=' . a:bg . ' ctermbg=' . a:bg
+      let l:cmd .= ' guibg=' . a:bg
+      if has('gui_running') || &termguicolors
+        " Only add ctermbg if not in GUI mode
+      else
+        let l:cmd .= ' ctermbg=' . s:GetCterm(a:bg)
+      endif
     endif
   endif
 
@@ -313,10 +345,11 @@ call s:HL('DiffDelete', '', s:colors.bg1, '')
 call s:HL('DiffText', s:colors.bg0, s:colors.yellow, '')
 
 " Spell
-exe 'hi SpellBad gui=' . (g:gruvbox_undercurl ? 'undercurl' : 'underline') . ' guisp=' . s:colors.red
-exe 'hi SpellCap gui=' . (g:gruvbox_undercurl ? 'undercurl' : 'underline') . ' guisp=' . s:colors.blue
-exe 'hi SpellLocal gui=' . (g:gruvbox_undercurl ? 'undercurl' : 'underline') . ' guisp=' . s:colors.aqua
-exe 'hi SpellRare gui=' . (g:gruvbox_undercurl ? 'undercurl' : 'underline') . ' guisp=' . s:colors.purple
+let s:spell_attr = g:gruvbox_undercurl ? 'undercurl' : 'underline'
+exe 'hi SpellBad cterm=' . s:spell_attr . ' gui=' . s:spell_attr . ' guisp=' . s:colors.red . ' ctermfg=' . s:GetCterm(s:colors.red)
+exe 'hi SpellCap cterm=' . s:spell_attr . ' gui=' . s:spell_attr . ' guisp=' . s:colors.blue . ' ctermfg=' . s:GetCterm(s:colors.blue)
+exe 'hi SpellLocal cterm=' . s:spell_attr . ' gui=' . s:spell_attr . ' guisp=' . s:colors.aqua . ' ctermfg=' . s:GetCterm(s:colors.aqua)
+exe 'hi SpellRare cterm=' . s:spell_attr . ' gui=' . s:spell_attr . ' guisp=' . s:colors.purple . ' ctermfg=' . s:GetCterm(s:colors.purple)
 
 " Diagnostics
 call s:HL('DiagnosticError', s:colors.red, '', '')
