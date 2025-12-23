@@ -1,0 +1,40 @@
+*gruvbox.txt*        vim-gruvbox: gruvbox color scheme for Vim
+
+Author: Romain Augier
+License: MIT
+
+INTRODUCTION                                    *vim-gruvbox*
+
+vim-gruvbox provides a simple gruvbox inspired colorscheme.
+
+Requires:
+- Vim 8+
+
+INSTALLATION                                    *vim-gruvbox-install*
+
+Use your plugin manager, e.g., vim-plug:
+
+    Plug 'romainaugier/vim-gruvbox'
+
+Then :PlugInstall.
+
+CONFIGURATION                                   *vim-gruvbox-config*
+
+Configuration Options (set before loading the colorscheme):
+    let g:gruvbox_bold - Enable/disable bold text (default: 1)
+    let g:gruvbox_italic - Enable/disable italic text (default: 1)
+    let g:gruvbox_contrast_dark - Dark mode contrast: 'soft', 'medium', 'hard' (default: 'medium')
+    let g:gruvbox_contrast_light - Light mode contrast: 'soft', 'medium', 'hard' (default: 'medium')
+    let g:gruvbox_transparent_mode - Enable transparent background (default: 0)
+    let g:gruvbox_italic_comments - Italicize comments (default: 1)
+    let g:gruvbox_italic_strings - Italicize strings (default: 1)
+    let g:gruvbox_invert_selection - Invert visual selection (default: 0)
+
+USAGE                                           *vim-gruvbox-usage*
+
+In your .vimrc
+    set background='dark' or 'light'
+    let g:gruvbox_contrast_dark = 'hard'
+    let g:gruvbox_italic = 1
+    colorscheme gruvbox
+
